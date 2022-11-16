@@ -9,4 +9,20 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- Strings used for workshop Cookbook with navigation -->
+    <string-array name="recipe_selection_list">
+        <item>Lasagne</item>
+        <item>Calzone</item>
+        <item>Tuna Salad</item>
+    </string-array>
+
+    <string name="my_cookbook_app">My CookBook App</string>
+    <string name="show_recipe">show recipe</string>
+    <string name="recipe_image">recipe image</string>
+    <string name="add_recipe_btn">Add Recipe</string>
+    <string name="recipe">recipe image</string>
+    <string name="show_description">show description</string>
+    <string name="share_selected_recipe">share selected recipe</string>
+
 </resources>
