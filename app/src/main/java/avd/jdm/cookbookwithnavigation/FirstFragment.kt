@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import avd.jdm.cookbookwithnavigation.databinding.FragmentFirstBinding
+import avd.jdm.cookbookwithnavigation.model.RecipeDaoImpl
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -18,6 +19,8 @@ class FirstFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private val recipeDao = RecipeDaoImpl()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,10 +35,18 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.showDescriptionBtn.setOnClickListener {
+            val recipe =  binding.recipeSelectionSpn.selectedItem.toString()
+            binding.descriptionTextview.text = getRecipeDescription (recipe)
+        }
+
         binding.recipeDetailsBtn.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
     }
+
+    private fun getRecipeDescription(recipe: String): String =
+        recipeDao.find(recipe)?.description ?: "no description found for ${recipe}"
 
     override fun onDestroyView() {
         super.onDestroyView()
