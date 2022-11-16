@@ -1,10 +1,12 @@
 package avd.jdm.cookbookwithnavigation
 
 import android.os.Bundle
+import android.view.*
+import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import avd.jdm.cookbookwithnavigation.databinding.FragmentSecondBinding
 import androidx.navigation.fragment.navArgs
@@ -37,6 +39,7 @@ class SecondFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpMenu()
 
         binding.buttonSecond.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
@@ -46,8 +49,42 @@ class SecondFragment : Fragment() {
         binding.textviewSecond.text = recipe?.toString() ?: "no recipe found with name ${args.recipe}"
     }
 
+    private fun setUpMenu() {
+        (requireActivity() as MenuHost).addMenuProvider(object: MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+
+                // problem duplicated menu-items
+                    menuInflater.inflate(R.menu.menu_recipe_details, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when(menuItem.itemId) {
+                    R.id.action_share -> {
+                        shareSelectedRecipe()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun shareSelectedRecipe() {
+        val recipe = recipes.find(args.recipe)
+
+        val shareByMailIntent = ShareCompat.IntentBuilder(requireContext())
+            .setType("text/plain")
+            .setSubject("My menu choice for today")
+            .setText("Hi, today I'm having this delicious meal for dinner: $recipe")
+            .intent
+
+        startActivity(shareByMailIntent)
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
     }
 }
