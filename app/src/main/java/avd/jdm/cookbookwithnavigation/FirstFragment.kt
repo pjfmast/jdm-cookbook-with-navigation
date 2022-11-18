@@ -36,8 +36,8 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.showDescriptionBtn.setOnClickListener {
-            val recipe =  binding.recipeSelectionSpn.selectedItem.toString()
-            binding.descriptionTextview.text = getRecipeDescription (recipe)
+            val recipe = binding.recipeSelectionSpn.selectedItem.toString()
+            binding.descriptionTextview.text = getRecipeDescription(recipe)
         }
 
         binding.recipeDetailsBtn.setOnClickListener {

@@ -46,32 +46,36 @@ class SecondFragment : Fragment() {
         }
 
         val recipe = recipes.find(args.recipe)
-        binding.textviewSecond.text = recipe?.toString() ?: "no recipe found with name ${args.recipe}"
+        binding.textviewSecond.text =
+            recipe?.toString() ?: "no recipe found with name ${args.recipe}"
     }
 
     private fun setUpMenu() {
-        (requireActivity() as MenuHost).addMenuProvider(object: MenuProvider {
+        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-
-                // problem duplicated menu-items
-                    menuInflater.inflate(R.menu.menu_recipe_details, menu)
+                menuInflater.inflate(R.menu.menu_recipe_details, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when(menuItem.itemId) {
+                return when (menuItem.itemId) {
                     R.id.action_share -> {
                         shareSelectedRecipe()
                         true
                     }
                     else -> false
+                   // false indicates menu item not handled,
+                   // see: https://stackoverflow.com/questions/23170715/android-menuitem-onclick-handlers-return-value
                 }
             }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        },  // problem duplicated menu-items is solved with adding state
+            // – the Lifecycle.State to check for automated addition/removal
+            viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun shareSelectedRecipe() {
         val recipe = recipes.find(args.recipe)
 
+        // example of the use of the builder pattern:
         val shareByMailIntent = ShareCompat.IntentBuilder(requireContext())
             .setType("text/plain")
             .setSubject("My menu choice for today")
