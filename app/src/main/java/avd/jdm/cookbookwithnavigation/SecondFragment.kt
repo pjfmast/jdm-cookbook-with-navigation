@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import avd.jdm.cookbookwithnavigation.databinding.FragmentSecondBinding
 import androidx.navigation.fragment.navArgs
+import avd.jdm.cookbookwithnavigation.model.Recipe
 import avd.jdm.cookbookwithnavigation.model.RecipeDaoImpl
 
 
@@ -20,6 +21,7 @@ class SecondFragment : Fragment() {
 
     private val args: SecondFragmentArgs by navArgs()
     private val recipes = RecipeDaoImpl()
+    private val recipe: Recipe? = recipes.find(args.recipe)
 
     private var _binding: FragmentSecondBinding? = null
 
@@ -45,7 +47,6 @@ class SecondFragment : Fragment() {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
 
-        val recipe = recipes.find(args.recipe)
         binding.textviewSecond.text =
             recipe?.toString() ?: "no recipe found with name ${args.recipe}"
     }
@@ -73,8 +74,6 @@ class SecondFragment : Fragment() {
     }
 
     private fun shareSelectedRecipe() {
-        val recipe = recipes.find(args.recipe)
-
         // example of the use of the builder pattern:
         val shareByMailIntent = ShareCompat.IntentBuilder(requireContext())
             .setType("text/plain")
