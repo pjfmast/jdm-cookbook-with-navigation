@@ -21,7 +21,7 @@ class SecondFragment : Fragment() {
 
     private val args: SecondFragmentArgs by navArgs()
     private val recipes = RecipeDaoImpl()
-    private val recipe: Recipe? = recipes.find(args.recipe)
+    private var recipe: Recipe? = null // initialised onCreateView()
 
     private var _binding: FragmentSecondBinding? = null
 
@@ -47,30 +47,34 @@ class SecondFragment : Fragment() {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
 
+        recipe = recipes.find(args.recipe)
+
         binding.textviewSecond.text =
             recipe?.toString() ?: "no recipe found with name ${args.recipe}"
     }
 
     private fun setUpMenu() {
-        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_recipe_details, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.action_share -> {
-                        shareSelectedRecipe()
-                        true
-                    }
-                    else -> false
-                   // false indicates menu item not handled,
-                   // see: https://stackoverflow.com/questions/23170715/android-menuitem-onclick-handlers-return-value
+        (requireActivity() as MenuHost).addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.menu_recipe_details, menu)
                 }
-            }
-        },  // problem duplicated menu-items is solved with adding state
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    return when (menuItem.itemId) {
+                        R.id.action_share -> {
+                            shareSelectedRecipe()
+                            true
+                        }
+                        else -> false
+                        // false indicates menu item not handled,
+                        // see: https://stackoverflow.com/questions/23170715/android-menuitem-onclick-handlers-return-value
+                    }
+                }
+            },  // problem duplicated menu-items is solved with adding state
             // – the Lifecycle.State to check for automated addition/removal
-            viewLifecycleOwner, Lifecycle.State.RESUMED)
+            viewLifecycleOwner, Lifecycle.State.RESUMED
+        )
     }
 
     private fun shareSelectedRecipe() {
